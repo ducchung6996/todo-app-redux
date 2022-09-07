@@ -1,8 +1,28 @@
 import { Col, Row, Input, Typography, Radio, Select, Tag } from 'antd';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux/es/exports';
+// import { searchFilterChange, statusFilterChange, priorityFilterChange } from '../redux/actions';
+import { filtersSlice } from './filtersSlice';
 
 const { Search } = Input;
 
 export default function Filters() {
+  const dispatch = useDispatch();
+  const [searchInput, setSearchInput] = useState('');
+  const handleSearchInput =(e) => {
+    setSearchInput(e.target.value);
+    dispatch(filtersSlice.actions.searchFilterChange(e.target.value));
+  }
+  const [filterStatus, setFilterStatus] = useState('All');
+  const handleFilterStatus = (e) => {
+    setFilterStatus(e.target.value);
+    dispatch(filtersSlice.actions.statusFilterChange(e.target.value));
+  }
+  const [filterPriorities, setFilterPriorities] = useState([]);
+  const handlePriorities =(e) => {
+    setFilterPriorities(e);
+    dispatch(filtersSlice.actions.priorityFilterChange(e));
+  }
   return (
     <Row justify='center'>
       <Col span={24}>
@@ -11,7 +31,7 @@ export default function Filters() {
         >
           Search
         </Typography.Paragraph>
-        <Search placeholder='input search text' />
+        <Search placeholder='input search text' value={searchInput} onChange={handleSearchInput}/>
       </Col>
       <Col sm={24}>
         <Typography.Paragraph
@@ -19,7 +39,7 @@ export default function Filters() {
         >
           Filter By Status
         </Typography.Paragraph>
-        <Radio.Group>
+        <Radio.Group value={filterStatus} onChange={handleFilterStatus}>
           <Radio value='All'>All</Radio>
           <Radio value='Completed'>Completed</Radio>
           <Radio value='Todo'>To do</Radio>
@@ -36,6 +56,8 @@ export default function Filters() {
           allowClear
           placeholder='Please select'
           style={{ width: '100%' }}
+          value={filterPriorities}
+          onChange={handlePriorities}
         >
           <Select.Option value='High' label='High'>
             <Tag color='red'>High</Tag>
